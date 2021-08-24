@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "noEmitOnError": true,
+    "outDir": "./dist",
+
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "noImplicitOverride": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true
+  }
+}
