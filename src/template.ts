@@ -7,6 +7,7 @@ const TEMPLATE = compile(`<!DOCTYPE html>
 
 <html>
 <head>
+<meta charset="utf-8">
 <title>{{ title }}</title>
 </head>
 <body>
@@ -20,7 +21,7 @@ export async function render(
   metadata: PageMetadata,
   content: string,
 ): Promise<void> {
-  ctx.set("Content-Type", "text/html");
+  ctx.set("Content-Type", "text/html; charset=UTF-8");
   ctx.body = TEMPLATE({
     ...metadata,
     content,

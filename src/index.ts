@@ -1,3 +1,4 @@
+import { promises as fs } from "fs";
 import path from "path";
 
 import koa from "koa";
@@ -7,19 +8,11 @@ import Site from "./site";
 import { render } from "./template";
 
 async function init(): Promise<void> {
-  if (process.argv.length < 3) {
-    throw new Error(
-      "Expected to be passed the path to the archived content repository.",
-    );
-  }
+  let root = path.normalize(path.resolve(path.dirname(__dirname)));
 
-  let content = path.resolve(process.argv[2]);
+  let content = path.join(root, "archived-content");
+  let staticPages = path.join(root, "pages");
   let site = await Site.build(content);
-
-  let port = 8000;
-  if (process.argv.length >= 4) {
-    port = parseInt(process.argv[3]);
-  }
 
   let app = new koa();
 
@@ -35,6 +28,31 @@ async function init(): Promise<void> {
     },
   );
 
+  app.use(
+    async (ctx: Koa.ParameterizedContext, next: Koa.Next): Promise<void> => {
+      let target = path.join(staticPages, ctx.path.substring(1));
+
+      try {
+        let stat = await fs.stat(target);
+        if (stat.isDirectory()) {
+          target = path.join(target, "index.html");
+          stat = await fs.stat(target);
+        }
+
+        if (stat.isFile()) {
+          let content = await fs.readFile(target, { encoding: "utf8" });
+          await render(ctx, { title: "MDN Archive" }, content);
+          return;
+        }
+      } catch (e) {
+        // Missing file.
+      }
+
+      await next();
+    },
+  );
+
+  let port = 8000;
   app.listen(port);
 
   console.log(`Listening on http://localhost:${port}`);
