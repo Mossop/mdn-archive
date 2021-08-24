@@ -3,6 +3,26 @@ import path from "path";
 
 import Page from "./page";
 
+const PREFIXES = ["archive/", "archive/mozilla/", "mozilla/", "mozilla/tech/"];
+
+function* possibleSlugs(slug: string): Generator<string, void> {
+  slug = slug.toLocaleLowerCase();
+
+  for (let i = PREFIXES.length - 1; i >= 0; i--) {
+    let prefix = PREFIXES[i];
+    if (slug.startsWith(prefix)) {
+      slug = slug.substring(prefix.length);
+      break;
+    }
+  }
+
+  yield slug;
+
+  for (let prefix of PREFIXES) {
+    yield prefix + slug;
+  }
+}
+
 export default class Locale {
   public readonly code: string;
   private pageMap = new Map<string, Page>();
@@ -20,7 +40,14 @@ export default class Locale {
   }
 
   public async findPage(slug: string): Promise<Page | null> {
-    return this.pageMap.get(slug.toLocaleLowerCase()) ?? null;
+    for (let possibleSlug of possibleSlugs(slug)) {
+      let page = this.pageMap.get(possibleSlug);
+      if (page) {
+        return page;
+      }
+    }
+
+    return null;
   }
 
   private async build(): Promise<void> {
