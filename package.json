@@ -1,0 +1,8 @@
+{
+  "name": "mdn-archive",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/Mossop/mdn-archive.git",
+  "author": "Dave Townsend <dtownsend@oxymoronical.com>",
+  "license": "MIT"
+}
