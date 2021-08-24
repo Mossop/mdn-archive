@@ -16,3 +16,5 @@ RUN \
   yarn cache clean
 
 ENTRYPOINT ["node", "dist"]
+
+EXPOSE 8000/tcp
